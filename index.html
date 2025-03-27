@@ -24,6 +24,17 @@
 
     <script>
         const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // const ground = new Image();
+        // https://opengameart.org/art-search-advanced?keys=&field_art_type_tid%5B%5D=9&sort_by=count&sort_order=DESC
+        const cabin = new Image();
+        cabin.src = "./images/OldWoodCabin.png";
+
+        // let backgroundPattern;
+        // ground.onload = () => {
+        //     backgroundPattern = ctx.createPattern(ground, 'repeat');
+        // }
 
         let item = {
             x: 150,
@@ -53,7 +64,7 @@
             item.active = false; // Deactivate the item
             }
         }
-        const ctx = canvas.getContext("2d");
+        
 
         canvas.width = document.documentElement.clientWidth - 20;
         canvas.height = document.documentElement.clientHeight / 1.2 - 20;
@@ -107,9 +118,17 @@
         document.addEventListener('mousemove', (e) => {
             lastMouseEvent = e;
         });
-
         function drawPlayer() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background
+            // if (backgroundPattern) {
+            //     ctx.fillStyle = backgroundPattern;
+            //     ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // }
+
+            // Draw cabin on canvas
+            ctx.drawImage(cabin, 700, 0, 150, 150);
             
             // Get mouse position
             const rect = canvas.getBoundingClientRect();
