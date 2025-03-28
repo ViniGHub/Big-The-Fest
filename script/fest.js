@@ -1,10 +1,12 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-canvas.width = document.documentElement.clientWidth - 20;
-canvas.height = document.documentElement.clientHeight / 1.2 - 20;
+document.querySelector("canvas").append("<h1>Big, The Fest</h1>")
 
-const ground = new Image();
+canvas.width = document.documentElement.clientWidth;
+canvas.height = document.documentElement.clientHeight;
+
+const ground = new Image(200, 200);
 ground.src = "./images/ground.png"
 // https://opengameart.org/art-search-advanced?keys=&field_art_type_tid%5B%5D=9&sort_by=count&sort_order=DESC
 const cabin = {
@@ -29,6 +31,14 @@ let item = {
     color: "green",
     active: true
 };
+
+let roof = {
+    x: 50,
+    y: 0,
+    width: 600,
+    height: 200,
+    color: "grey",
+}
 
 function drawItem() {
     if (item.active) {
@@ -91,8 +101,14 @@ const walls = [
         width: 100,
         height: 30,
         color: "black",
+    },
+    {
+        x: 0,
+        y: canvas.height - 30,
+        width: canvas.width,
+        height: 30,
+        color: "grey",
     }
-
 ]
 
 
@@ -113,6 +129,7 @@ function drawPlayer() {
     ctx.drawImage(cabin.img, cabin.x, cabin.y, cabin.width, cabin.height);
     isCollidingWall({ ...cabin })
 
+    
     // Get mouse position
     const rect = canvas.getBoundingClientRect();
     const mouseX = lastMouseEvent ? lastMouseEvent.clientX - rect.left : player.x;
@@ -160,6 +177,11 @@ function drawPlayer() {
             ctx.fillRect(player.x + player.size, player.y, player.size / 2.5, player.size / 2.5);
             break;
     }
+
+    // Draw roof
+    ctx.fillStyle = roof.color
+    ctx.fillRect(roof.x, roof.y, roof.width, roof.height);
+
 }
 
 function drawWalls() {
