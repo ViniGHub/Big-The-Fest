@@ -62,15 +62,19 @@ function checkItemCollision() {
 }
 
 const player = {
+    img: new Image(),
+    src: "./images/personagens/big-parado-direita.png",
     x: 50,
     y: 50,
-    size: 30,
-    color: "Sienna",
+    width: 48,
+    height: 90,
     side: "right",
+    mode: "parado",
     velocity: 3,
     movementy: 0,
     movementx: 0
 };
+player.img.src = player.src
 
 //build a square
 const walls = [
@@ -120,10 +124,10 @@ function drawPlayer() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw background
-    if (backgroundPattern) {
-        ctx.fillStyle = backgroundPattern;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
+    // if (backgroundPattern) {
+    //     ctx.fillStyle = backgroundPattern;
+    //     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // }
 
     // Draw cabin on canvas
     ctx.drawImage(cabin.img, cabin.x, cabin.y, cabin.width, cabin.height);
@@ -131,21 +135,21 @@ function drawPlayer() {
 
     
     // Get mouse position
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = lastMouseEvent ? lastMouseEvent.clientX - rect.left : player.x;
-    const mouseY = lastMouseEvent ? lastMouseEvent.clientY - rect.top : player.y;
+    // const rect = canvas.getBoundingClientRect();
+    // const mouseX = lastMouseEvent ? lastMouseEvent.clientX - rect.left : player.x;
+    // const mouseY = lastMouseEvent ? lastMouseEvent.clientY - rect.top : player.y;
 
     // Calculate angle between player and mouse
-    const dx = mouseX - (player.x + player.size / 2);
-    const dy = mouseY - (player.y + player.size / 2);
+    // const dx = mouseX - (player.x + player.width / 2);
+    // const dy = mouseY - (player.y + player.height / 2);
 
     // Set player side based on angle
-    if (Math.abs(dx) > Math.abs(dy)) {
-        player.side = dx > 0 ? "right" : "left";
-    } else {
-        player.side = dy > 0 ? "down" : "up";
-    }
-    ctx.fillStyle = player.color;
+    // if (Math.abs(dx) > Math.abs(dy)) {
+    //     player.side = dx > 0 ? "right" : "left";
+    // } else {
+    //     player.side = dy > 0 ? "down" : "up";
+    // }
+    // ctx.fillStyle = player.color;
 
     isCollingCanvas();
     for (let wall of walls)
@@ -155,26 +159,17 @@ function drawPlayer() {
     player.y += player.movementy;
 
     // Draw main player square
-    ctx.fillRect(player.x, player.y, player.size, player.size);
+    // ctx.fillStyle = player.color;
+    // ctx.fillRect(player.x, player.y, player.width, player.height);
+    ctx.drawImage(player.img, player.x, player.y, player.width, player.height);
 
     // Draw direction indicator
-    ctx.fillStyle = "Bisque";
     switch (player.side) {
         case "right":
-            ctx.fillRect(player.x, player.y - player.size / 2.5, player.size / 2.5, player.size / 2.5);
-            ctx.fillRect(player.x, player.y + player.size, player.size / 2.5, player.size / 2.5);
+            player.img.src = `./images/personagens/big-${player.mode}-direita.png`
             break;
         case "left":
-            ctx.fillRect(player.x + player.size - player.size / 2.5, player.y - player.size / 2.5, player.size / 2.5, player.size / 2.5);
-            ctx.fillRect(player.x + player.size - player.size / 2.5, player.y + player.size, player.size / 2.5, player.size / 2.5);
-            break;
-        case "up":
-            ctx.fillRect(player.x - player.size / 2.5, player.y + player.size - player.size / 2.5, player.size / 2.5, player.size / 2.5);
-            ctx.fillRect(player.x + player.size, player.y + player.size - player.size / 2.5, player.size / 2.5, player.size / 2.5);
-            break;
-        case "down":
-            ctx.fillRect(player.x - player.size / 2.5, player.y, player.size / 2.5, player.size / 2.5);
-            ctx.fillRect(player.x + player.size, player.y, player.size / 2.5, player.size / 2.5);
+            player.img.src = `./images/personagens/big-${player.mode}-esquerda.png`
             break;
     }
 
@@ -237,20 +232,20 @@ function isCollidingWall(wall, obj) {
 
         return 0;
     } else if (player.x < wall.x + wall.width &&
-        player.x + player.size > wall.x &&
+        player.x + player.width > wall.x &&
         player.y < wall.y + wall.height &&
-        player.y + player.size > wall.y) {
+        player.y + player.height > wall.y) {
         if (player.x >= wall.x + wall.width - 5) {
             player.x = wall.x + wall.width;
             return 1
-        } else if (player.x + player.size <= wall.x + 5) {
-            player.x = wall.x - player.size;
+        } else if (player.x + player.width <= wall.x + 5) {
+            player.x = wall.x - player.width;
             return 2
         } else if (player.y >= wall.y + wall.height - 5) {
             player.y = wall.y + wall.height;
             return 3
-        } else if (player.y + player.size <= wall.y + 5) {
-            player.y = wall.y - player.size;
+        } else if (player.y + player.height <= wall.y + 5) {
+            player.y = wall.y - player.height;
             return 4
         }
     }
@@ -265,22 +260,22 @@ document.addEventListener("keydown", function (event) {
     switch (event.key) {
         case "w":
         case "ArrowUp":
-            if (player.y > 0 && walls.some(wall => !isCollidingWall(wall))) player.movementy = -player.velocity;
+            if (player.y > 0 && walls.some(wall => !isCollidingWall(wall))) player.movementy = -player.velocity; player.mode = "andando";
             player.side = "up";
             break;
         case "s":
         case "ArrowDown":
-            if (player.y + player.size < canvas.height && walls.some(wall => !isCollidingWall(wall))) player.movementy = player.velocity;
+            if (player.y + player.height < canvas.height && walls.some(wall => !isCollidingWall(wall))) player.movementy = player.velocity; player.mode = "andando";
             player.side = "down";
             break;
         case "a":
         case "ArrowLeft":
-            if (player.x > 0 && walls.some(wall => !isCollidingWall(wall))) player.movementx = -player.velocity;
+            if (player.x > 0 && walls.some(wall => !isCollidingWall(wall))) player.movementx = -player.velocity; player.mode = "andando";
             player.side = "left";
             break;
         case "d":
         case "ArrowRight":
-            if (player.x + player.size < canvas.width && walls.some(wall => !isCollidingWall(wall))) player.movementx = player.velocity;
+            if (player.x + player.width < canvas.width && walls.some(wall => !isCollidingWall(wall))) player.movementx = player.velocity; player.mode = "andando";
             player.side = "right";
             break;
     }
@@ -290,19 +285,19 @@ document.addEventListener("keyup", function (event) {
     switch (event.key) {
         case "w":
         case "ArrowUp":
-            if (player.movementy < 0) player.movementy = 0;
+            if (player.movementy < 0) player.movementy = 0; player.mode = "parado"
             break;
         case "s":
         case "ArrowDown":
-            if (player.movementy > 0) player.movementy = 0;
+            if (player.movementy > 0) player.movementy = 0; player.mode = "parado"
             break;
         case "a":
         case "ArrowLeft":
-            if (player.movementx < 0) player.movementx = 0;
+            if (player.movementx < 0) player.movementx = 0; player.mode = "parado"
             break;
         case "d":
         case "ArrowRight":
-            if (player.movementx > 0) player.movementx = 0;
+            if (player.movementx > 0) player.movementx = 0; player.mode = "parado"
             break;
 
     }
